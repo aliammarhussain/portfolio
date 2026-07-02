@@ -1,0 +1,190 @@
+<dialog id="image-lightbox" class="image-lightbox" aria-label="Image preview">
+  <div class="image-lightbox-backdrop" data-lightbox-close></div>
+  <div class="image-lightbox-panel" role="document">
+    <button
+      type="button"
+      class="image-lightbox-close"
+      data-lightbox-close
+      aria-label="Close preview"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      id="lightbox-prev"
+      class="image-lightbox-nav image-lightbox-nav-prev"
+      aria-label="Previous image"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5L8.25 12l7.5-7.5"></path>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      id="lightbox-next"
+      class="image-lightbox-nav image-lightbox-nav-next"
+      aria-label="Next image"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+      </svg>
+    </button>
+
+    <figure class="image-lightbox-figure" id="lightbox-figure">
+      <img id="lightbox-image" class="image-lightbox-img" src="" alt="" />
+      <figcaption id="lightbox-caption" class="image-lightbox-caption"></figcaption>
+      <p id="lightbox-counter" class="image-lightbox-counter" aria-live="polite"></p>
+    </figure>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById("image-lightbox") as HTMLDialogElement;
+  const img = document.getElementById("lightbox-image") as HTMLImageElement;
+  const caption = document.getElementById("lightbox-caption") as HTMLElement;
+  const counter = document.getElementById("lightbox-counter") as HTMLElement;
+  const figure = document.getElementById("lightbox-figure") as HTMLElement;
+  const prevBtn = document.getElementById("lightbox-prev") as HTMLButtonElement;
+  const nextBtn = document.getElementById("lightbox-next") as HTMLButtonElement;
+
+  let slides: HTMLButtonElement[] = [];
+  let currentIndex = 0;
+
+  const getSlideData = (btn: HTMLButtonElement) => ({
+    src: btn.getAttribute("data-lightbox-src") ?? "",
+    alt: btn.getAttribute("data-lightbox-alt") ?? "",
+    caption: btn.getAttribute("data-lightbox-caption") ?? "",
+  });
+
+  const updateNav = () => {
+    const hasMultiple = slides.length > 1;
+    prevBtn.hidden = !hasMultiple;
+    nextBtn.hidden = !hasMultiple;
+    counter.hidden = !hasMultiple;
+    if (hasMultiple) {
+      counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+    }
+  };
+
+  const showSlide = (index: number, animate = true) => {
+    if (!slides.length || !img || !caption) return;
+
+    currentIndex = (index + slides.length) % slides.length;
+    const { src, alt, caption: captionText } = getSlideData(slides[currentIndex]);
+
+    const apply = () => {
+      img.src = src;
+      img.alt = alt;
+      caption.textContent = captionText;
+      caption.hidden = !captionText;
+      updateNav();
+      if (animate) {
+        figure.classList.remove("is-changing");
+        void figure.offsetWidth;
+        figure.classList.add("is-changing");
+      }
+    };
+
+    if (animate && figure) {
+      figure.classList.add("is-changing");
+      setTimeout(apply, 120);
+    } else {
+      apply();
+    }
+  };
+
+  const openLightbox = (btn: HTMLButtonElement) => {
+    const gallery = btn.closest("[data-lightbox-gallery]");
+    slides = Array.from(
+      gallery?.querySelectorAll<HTMLButtonElement>("[data-lightbox-src]") ?? [btn],
+    );
+    currentIndex = slides.indexOf(btn);
+    if (currentIndex < 0) currentIndex = 0;
+
+    showSlide(currentIndex, false);
+    dialog?.showModal();
+    document.body.classList.add("lightbox-open");
+  };
+
+  const closeLightbox = () => {
+    if (!dialog?.open) return;
+    dialog.close();
+    document.body.classList.remove("lightbox-open");
+    slides = [];
+    currentIndex = 0;
+    if (img) {
+      img.src = "";
+      img.alt = "";
+    }
+  };
+
+  const goPrev = () => showSlide(currentIndex - 1);
+  const goNext = () => showSlide(currentIndex + 1);
+
+  document.querySelectorAll<HTMLButtonElement>("[data-lightbox-src]").forEach((btn) => {
+    btn.addEventListener("click", () => openLightbox(btn));
+  });
+
+  prevBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    goPrev();
+  });
+
+  nextBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    goNext();
+  });
+
+  dialog?.addEventListener("click", (e) => {
+    if (e.target === dialog) closeLightbox();
+  });
+
+  document.querySelectorAll("[data-lightbox-close]").forEach((el) => {
+    el.addEventListener("click", closeLightbox);
+  });
+
+  dialog?.addEventListener("close", () => {
+    document.body.classList.remove("lightbox-open");
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!dialog?.open) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") goPrev();
+    if (e.key === "ArrowRight") goNext();
+  });
+</script>

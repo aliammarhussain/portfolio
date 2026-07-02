@@ -1,0 +1,49 @@
+---
+import Section from "./Section.astro";
+import Reveal from "./Reveal.astro";
+import TechIcon from "@icons/TechIcon.astro";
+import type { TechExpertiseItem } from "@types";
+
+interface Props {
+  items: TechExpertiseItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<Section text="Technical Expertise" href="tech-expertise">
+  <Reveal variant="fade">
+    <p class="mb-10 max-w-3xl text-base text-neutral md:text-lg">
+      Beyond AI, I bring 5+ years of full-stack engineering — building scalable
+      backends, modern frontends, secure APIs, and production deployments for
+      international SaaS and enterprise clients.
+    </p>
+  </Reveal>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-stagger-group>
+    {
+      items.map(({ title, description, icon, tags }) => (
+        <article
+          data-stagger-item
+          class="glass-card group h-full rounded-2xl border border-neutral/20 p-5"
+        >
+          <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:bg-emerald-500/20">
+            <TechIcon name={icon} />
+          </div>
+          <h3 class="mb-2 font-serif text-lg font-semibold text-white transition-colors duration-300 group-hover:text-emerald-300/90">
+            {title}
+          </h3>
+          <p class="mb-3 text-sm leading-relaxed text-neutral">{description}</p>
+          {tags && tags.length > 0 && (
+            <div class="flex flex-wrap gap-1.5">
+              {tags.map((tag) => (
+                <span class="rounded-md border border-emerald-500/15 bg-emerald-500/5 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-300/80">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</Section>

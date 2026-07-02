@@ -2,26 +2,69 @@
 import type { HeroProps } from "@types";
 type Props = HeroProps;
 
-const { name, specialty, summary, email } = Astro.props;
+const { name, specialty, summary, email, highlights } = Astro.props;
 ---
 
-<section class="py-24 md:py-32" id="#hero">
+<section class="relative py-24 md:py-32" id="#hero">
+  <div class="hero-status" style="animation-delay: 0ms">
+    <p
+      class="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium tracking-wide text-primary/90 uppercase"
+    >
+      <span class="relative flex h-2 w-2">
+        <span
+          class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-40"
+        ></span>
+        <span class="relative inline-flex h-2 w-2 rounded-full bg-primary"
+        ></span>
+      </span>
+      Available for opportunities
+    </p>
+  </div>
+
   <h1
     class="mb-1.5 font-serif text-7xl font-bold tracking-tightest text-white sm:text-8xl md:mb-0 md:text-9xl"
   >
-    {name}
+    <span class="hero-line">
+      <span class="hero-line-inner" style="animation-delay: 100ms">{name}</span>
+    </span>
   </h1>
   <p
-    class="mb-9 font-serif text-4xl leading-11.5 font-bold tracking-tighter text-primary sm:text-5xl md:text-6xl"
+    class="text-gradient mb-9 font-serif text-4xl leading-11.5 font-bold tracking-tighter sm:text-5xl md:text-6xl"
   >
-    {specialty}
+    <span class="hero-line">
+      <span class="hero-line-inner" style="animation-delay: 200ms"
+        >{specialty}</span
+      >
+    </span>
   </p>
-  <p class="mb-16 text-base font-normal text-neutral md:text-lg">
+  <p
+    class="hero-status mb-8 max-w-2xl text-base font-normal text-neutral md:text-lg"
+    style="animation-delay: 350ms"
+  >
     {summary}
   </p>
 
+  {
+    highlights && highlights.length > 0 && (
+      <div
+        class="hero-status mb-16 flex flex-wrap gap-2"
+        style="animation-delay: 450ms"
+      >
+        {highlights.map((item, i) => (
+          <span
+            class="hero-badge hero-status rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 text-xs font-medium text-primary/90 md:text-sm"
+            style={`animation-delay: ${500 + i * 50}ms`}
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    )
+  }
+
   <a
-    class="inline-block rounded-full bg-primary px-8 py-5 text-sm leading-5 font-medium text-[#fff]"
+    class="btn-primary hero-status inline-block rounded-full bg-primary px-8 py-5 text-sm leading-5 font-medium text-white"
+    style="animation-delay: 650ms"
     href={`mailto:${email}`}>Get in Touch</a
   >
 </section>

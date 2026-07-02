@@ -1,0 +1,20 @@
+---
+export type RevealVariant = "up" | "fade" | "scale" | "blur" | "left" | "right";
+
+interface Props {
+  delay?: number;
+  variant?: RevealVariant;
+  class?: string;
+}
+
+const { delay = 0, variant = "up", class: className } = Astro.props;
+---
+
+<div
+  class:list={["reveal", `reveal-${variant}`, className]}
+  data-reveal
+  data-reveal-variant={variant}
+  style={`--reveal-delay: ${delay}ms`}
+>
+  <slot />
+</div>

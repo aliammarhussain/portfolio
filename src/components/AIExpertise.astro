@@ -1,0 +1,41 @@
+---
+import Section from "./Section.astro";
+import Reveal from "./Reveal.astro";
+import AIIcon from "@icons/AIIcon.astro";
+import type { AIExpertiseItem } from "@types";
+
+interface Props {
+  items: AIExpertiseItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<Section text="AI Expertise" href="ai-expertise">
+  <Reveal variant="fade">
+    <p class="mb-10 max-w-3xl text-base text-neutral md:text-lg">
+      As a Senior Software Engineer, I architect production AI systems — not
+      surface-level LLM integrations. My work spans intelligent agents, RAG
+      pipelines, multimodal Vision AI, and enterprise workflows where AI is the
+      core product.
+    </p>
+  </Reveal>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-stagger-group>
+    {
+      items.map(({ title, description, icon }) => (
+        <article
+          data-stagger-item
+          class="glass-card group h-full rounded-2xl border border-neutral/20 p-5"
+        >
+          <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:bg-primary/20">
+            <AIIcon name={icon} />
+          </div>
+          <h3 class="mb-2 font-serif text-lg font-semibold text-white transition-colors duration-300 group-hover:text-primary/90">
+            {title}
+          </h3>
+          <p class="text-sm leading-relaxed text-neutral">{description}</p>
+        </article>
+      ))
+    }
+  </div>
+</Section>

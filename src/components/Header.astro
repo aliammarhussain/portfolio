@@ -9,11 +9,12 @@ const { siteLogo, navLinks } = Astro.props;
 ---
 
 <header
-  class="sticky top-0 z-50 mx-auto flex max-w-5xl animate-slide-in justify-between bg-black px-5 py-6"
+  class="sticky top-0 z-50 mx-auto flex max-w-5xl animate-slide-in justify-between border-b border-transparent bg-black/70 px-5 py-6 backdrop-blur-xl transition-[border-color,background] duration-300"
+  id="site-header"
 >
-  <a href="/" aria-label="Home link">
+  <a href="/" aria-label="Home link" class="transition-transform hover:scale-105">
     <Image
-      class="rounded-full"
+      class="rounded-full ring-2 ring-primary/20 transition-shadow hover:ring-primary/40"
       src={siteLogo}
       width="45"
       height="45"
@@ -33,15 +34,15 @@ const { siteLogo, navLinks } = Astro.props;
   </button>
 
   <nav
-    class="absolute top-20 right-5 hidden rounded-xl border border-neutral/40 bg-black px-4 py-5 text-neutral sm:static sm:block sm:border-0 sm:bg-transparent sm:p-0"
+    class="absolute top-20 right-5 hidden rounded-xl border border-neutral/40 bg-black/90 px-4 py-5 text-neutral shadow-xl backdrop-blur-xl sm:static sm:block sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none"
     id="main-menu"
   >
-    <ul class="gap-2 sm:flex">
+    <ul class="nav-list gap-2 sm:flex">
       {
         navLinks.map((link) => (
           <li class="relative">
             <a
-              class={`nav-item relative block p-2 text-sm font-medium transition-all duration-500 after:absolute after:bottom-0 after:left-2/4 after:h-2 after:w-1 after:-translate-x-2/4 after:text-primary after:opacity-0 after:content-['•'] hover:text-white`}
+              class="nav-link relative block p-2 text-sm font-medium transition-colors duration-300 after:absolute after:bottom-0 after:left-2/4 after:h-2 after:w-1 after:-translate-x-2/4 after:text-primary after:opacity-0 after:transition-opacity after:content-['•'] hover:text-white"
               href={link.href}
             >
               {link.text}
@@ -54,10 +55,37 @@ const { siteLogo, navLinks } = Astro.props;
 </header>
 
 <script>
+  // Header scroll state
+  const header = document.querySelector("#site-header");
+  const onScroll = () => {
+    if (!header) return;
+    if (window.scrollY > 20) {
+      header.classList.add("border-neutral/20", "bg-black/90");
+    } else {
+      header.classList.remove("border-neutral/20", "bg-black/90");
+    }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
   // Toggle mobile menu
   const button = document.querySelector("#menu-button");
   const menu = document.querySelector("#main-menu");
-  const navItems = document.querySelectorAll("#main-menu > ul > li > a");
+  const navItems = document.querySelectorAll<HTMLAnchorElement>(".nav-link");
+
+  const setActiveNav = (id: string) => {
+    navItems.forEach((item) => {
+      const isActive = item.getAttribute("href") === `#${id}`;
+      item.classList.toggle("text-white", isActive);
+      item.classList.toggle("md:after:opacity-100", isActive);
+      item.classList.toggle("nav-link-active", isActive);
+      if (isActive) {
+        item.setAttribute("aria-current", "true");
+      } else {
+        item.removeAttribute("aria-current");
+      }
+    });
+  };
 
   const toggleMenu = () => {
     menu?.classList.toggle("hidden");
@@ -70,38 +98,33 @@ const { siteLogo, navLinks } = Astro.props;
     item?.addEventListener("click", toggleMenu);
   });
 
-  // Update navigation based on scroll position with Intersection Observer
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navItems.forEach((item) => {
-            if (item.getAttribute("href") === `#${entry.target.id}`) {
-              item.classList.add("text-white", "md:after:opacity-100");
-            } else {
-              item.classList.remove("text-white", "md:after:opacity-100");
-            }
-          });
-        }
-      });
-    },
-    { threshold: 0.5 },
-  );
+  // Update navigation based on scroll position (deterministic).
+  // Only consider sections that match the current nav links.
+  const targetIds = Array.from(navItems)
+    .map((a) => {
+      const href = a.getAttribute("href") ?? "";
+      return href.startsWith("#") ? href.slice(1) : "";
+    })
+    .filter((id) => !!id);
 
-  document.querySelectorAll("section").forEach((section) => {
-    observer.observe(section);
-  });
+  const updateActiveFromScroll = () => {
+    const headerOffset = (header?.getBoundingClientRect().height ?? 0) + 12;
+    let activeId = "";
 
-  // Cleanup observer
-  document.onvisibilitychange = () => {
-    if (document.visibilityState === "hidden") {
-      observer.disconnect();
-    } else {
-      document.querySelectorAll("section").forEach((section) => {
-        observer.observe(section);
-      });
+    // Pick the last section whose top is above the header offset.
+    for (const id of targetIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top;
+      if (top - headerOffset <= 0) activeId = id;
     }
+
+    setActiveNav(activeId);
   };
+
+  window.addEventListener("scroll", updateActiveFromScroll, { passive: true });
+  window.addEventListener("resize", updateActiveFromScroll);
+  updateActiveFromScroll();
 </script>
 
 <style>
