@@ -21,7 +21,6 @@
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.7.2"
   },
-  "packageManager": "pnpm@10.18.2",
   "overrides": {
     "vite": "^7"
   }

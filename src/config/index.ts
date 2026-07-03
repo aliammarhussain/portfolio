@@ -1,4 +1,9 @@
 import type { SiteConfig, SiteContent } from "../types";
+import {
+  dominiqxProjectImages,
+  profileImage,
+  tdhProjectImages,
+} from "../assets/images";
 
 export const SITE_CONFIG: SiteConfig = {
   title: "Ali Ammar Hussain — Senior Software Engineer · AI Systems",
@@ -6,7 +11,7 @@ export const SITE_CONFIG: SiteConfig = {
   description:
     "Senior Software Engineer specializing in production AI systems — RAG pipelines, AI agents, multimodal Vision AI, tool calling, and enterprise intelligent workflows. Based in Lahore, Pakistan.",
   lang: "en",
-  siteLogo: "/profile.png",
+  siteLogo: profileImage,
   navLinks: [
     { text: "AI Expertise", href: "#ai-expertise" },
     { text: "Tech Stack", href: "#tech-expertise" },
@@ -18,7 +23,7 @@ export const SITE_CONFIG: SiteConfig = {
     { text: "Email", href: "mailto:aliammarhussain1122@gmail.com" },
     { text: "Phone", href: "tel:+923086612077" },
   ],
-  socialImage: "/profile.png",
+  socialImage: profileImage.src,
 };
 
 export const SITE_CONTENT: SiteContent = {
@@ -274,23 +279,7 @@ export const SITE_CONTENT: SiteContent = {
         "Engineered AI stitching to unify Vault, Database Assistant, and Expert Models in one conversation.",
         "Created domain-specific AI assistants for construction compliance, rules, and regulations.",
       ],
-      images: [
-        {
-          src: "/projects/dominiqx-1.png",
-          alt: "DOMINIQX AI chat interface with Knowledge Vault and document-based Q&A",
-          caption: "AI Chat · Knowledge Vault & RAG Conversations",
-        },
-        {
-          src: "/projects/dominiqx-2.png",
-          alt: "DOMINIQX Ask DOM AI hub with Sight, Upload, and agent stitching",
-          caption: "Unified AI Hub · Sight, Vault & Personal Assistants",
-        },
-        {
-          src: "/projects/dominiqx-3.png",
-          alt: "DOMINIQX integrated business dashboard with Ask DOM assistant",
-          caption: "Enterprise Dashboard · Ask DOM & Business Operations",
-        },
-      ],
+      images: dominiqxProjectImages,
       technologies: [
         "OpenAI APIs",
         "RAG",
@@ -389,23 +378,7 @@ export const SITE_CONTENT: SiteContent = {
         "Engineered AI-assisted hydraulic optimization with pump placement decision support.",
         "Created intelligent early-stage project cost estimation from equipment and layout analysis.",
       ],
-      images: [
-        {
-          src: "/projects/tdh-1.png",
-          alt: "TDH Engine map view with pipeline routing and hydraulic design tools",
-          caption: "Infrastructure Map · Pipeline Design & TDH Analysis",
-        },
-        {
-          src: "/projects/tdh-2.png",
-          alt: "TDH AI assistant performing pump calculations and data extraction",
-          caption: "TDH AI · Engineering Calculations & Pump Optimization",
-        },
-        {
-          src: "/projects/tdh-3.png",
-          alt: "TDH Engine calculator with hydraulic data table and column configuration",
-          caption: "TDH Engine · Hydraulic Calculator & Design Data",
-        },
-      ],
+      images: tdhProjectImages,
       technologies: [
         "OpenAI APIs",
         "Gemini",
@@ -604,6 +577,6 @@ export const SITE_CONTENT: SiteContent = {
 
       With 5+ years of full-stack experience across Node.js, Vue.js, Supabase, and workflow automation, I bring both AI architecture depth and production engineering rigor. I hold a BS in Software Engineering from Punjabi University College of Information Technology, Lahore (2017–2021).
     `,
-    image: "/profile.png",
+    image: profileImage,
   },
 };
